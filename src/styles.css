@@ -194,7 +194,9 @@ h1, h2, h3 { margin: 0; }
   .sidebar.open { transform: translateX(0); }
   .menu-btn, .topbar-logo { display: block; }
   .topbar { gap: 12px; padding: 0 16px; }
-  .company { margin-left: auto; font-size: 13px; color: var(--muted); }
+  .topbar-logo { margin-left: auto; }
+  .topbar-logo .logo { width: 94px; height: auto; }
+  .company { font-size: 13px; color: var(--muted); }
   .content { padding: 16px; }
   .tasks { grid-template-columns: 1fr; }
   .filters { border-right: 0; border-bottom: 1px solid var(--border); }
