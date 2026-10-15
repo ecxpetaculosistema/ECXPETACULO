@@ -22,7 +22,7 @@ export const artists = [
 
 export const initialTasks = [
   { id: 1, title: 'Enviar contrato Casa de Shows A para assinatura', ref: 'Show: Casa de Shows A', artist: 'art1', owner: 'fs', due: day(0), priority: 'alta', status: 'todo' },
-  { id: 2, title: 'Aprovar rider técnico do Casa de Shows B', ref: 'Show: Casa de Shows B', artist: 'art1', owner: 'bl', due: day(0), priority: 'alta', status: 'doing' },
+  { id: 2, title: 'Aprovar rider técnico da Casa de Shows B', ref: 'Show: Casa de Shows B', artist: 'art1', owner: 'bl', due: day(0), priority: 'alta', status: 'doing' },
   { id: 3, title: 'Fechar hotel da equipe em Curitiba', ref: 'Show: Festival Exemplo', artist: 'art1', owner: 'cs', due: day(2), priority: 'media', status: 'todo' },
   { id: 4, title: 'Enviar release e fotos para a imprensa', ref: 'Evento: Entrevista Rádio Exemplo', artist: 'art1', owner: 'sa', due: day(5), priority: 'media', status: 'todo' },
   { id: 5, title: 'Revisar proposta Festival Modelo', ref: '', artist: 'esc', owner: 'fs', due: day(7), priority: 'baixa', status: 'doing' },
