@@ -125,16 +125,28 @@ create table aircraft (
   model text, notes text
 );
 
+create type mission_type as enum ('show', 'privado', 'extra');
+
+-- Missão de voo (cada linha da tela "Voos")
 create table flights (
   id uuid primary key default gen_random_uuid(),
-  aircraft_id uuid references aircraft not null,
-  show_id uuid references shows on delete set null,
+  aircraft_id uuid references aircraft,
+  mission_type mission_type not null,
+  show_id uuid references shows on delete set null,   -- quando mission_type = 'show'
+  reason text,                                        -- motivo, quando 'privado' ou 'extra'
+  flight_date date not null,
+  origin_icao text not null, departs_time time,       -- aeroporto de decolagem (sigla) / horário previsto
+  dest_icao text not null,   arrives_time time,       -- aeroporto de pouso (sigla) / horário previsto
+  origin_contact_name text, origin_contact_phone text, -- responsável local na decolagem
+  dest_contact_name text,   dest_contact_phone text,   -- responsável local no pouso
+  hangar boolean default false,
+  patio boolean default false,
+  overnight boolean default false,                    -- pernoite
+  price numeric(12,2) default 0,                      -- valor
+  notes text,
   pilot_id uuid references profiles,
-  origin text not null, destination text not null,
-  departs_at timestamptz, arrives_at timestamptz,
-  flight_hours numeric(5,1),
-  status text default 'planejado',   -- planejado, confirmado, realizado
-  notes text
+  status text default 'planejado',
+  created_at timestamptz default now()
 );
 
 create table flight_costs (

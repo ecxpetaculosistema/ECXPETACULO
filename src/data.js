@@ -132,3 +132,31 @@ export const agendaShows = [
     responsaveis: [{ nome: 'Sicrano Alves', funcao: 'Cerimonial', telefone: '(16) 90000-0013' }],
   },
 ]
+
+// ---- Voos / missões (demo) ----
+export const initialMissions = [
+  {
+    id: 'm1', tipo: 'show', showId: 'a2', motivo: '', data: day(3),
+    decola: { sigla: 'SBSP', hora: '13:00' }, pousa: { sigla: 'SBCT', hora: '14:20' },
+    respDecola: { nome: 'Ciclano Souza', telefone: '(11) 90000-0101' }, respPousa: { nome: 'Beltrano Lima', telefone: '(41) 90000-0102' },
+    hangar: true, patio: false, pernoite: true, valor: '38500', obs: 'Abastecimento em Curitiba antes da decolagem de volta.',
+  },
+  {
+    id: 'm2', tipo: 'show', showId: 'a3', motivo: '', data: day(9),
+    decola: { sigla: 'SBGR', hora: '15:30' }, pousa: { sigla: 'SBMT', hora: '16:10' },
+    respDecola: { nome: 'Sicrano Alves', telefone: '(11) 90000-0103' }, respPousa: { nome: 'Fulano da Silva', telefone: '(11) 90000-0104' },
+    hangar: false, patio: true, pernoite: false, valor: '12800', obs: '',
+  },
+  {
+    id: 'm3', tipo: 'privado', showId: '', motivo: 'Traslado do artista – compromisso particular', data: day(12),
+    decola: { sigla: 'SBMT', hora: '09:00' }, pousa: { sigla: 'SBRP', hora: '09:55' },
+    respDecola: { nome: 'Fulano da Silva', telefone: '(11) 90000-0105' }, respPousa: { nome: 'Ciclano Souza', telefone: '(16) 90000-0106' },
+    hangar: true, patio: false, pernoite: false, valor: '9600', obs: 'Retorno no mesmo dia.',
+  },
+  {
+    id: 'm4', tipo: 'extra', showId: '', motivo: 'Reposicionamento da aeronave', data: day(20),
+    decola: { sigla: 'SBRP', hora: '08:00' }, pousa: { sigla: 'SBSP', hora: '08:50' },
+    respDecola: { nome: '', telefone: '' }, respPousa: { nome: '', telefone: '' },
+    hangar: false, patio: false, pernoite: false, valor: '4200', obs: '',
+  },
+]
