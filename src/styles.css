@@ -35,7 +35,7 @@ h1, h2, h3 { margin: 0; }
   border-right: 1px solid var(--border); padding: 18px 12px; display: flex; flex-direction: column; gap: 2px;
 }
 .brand { padding: 6px 8px 18px; }
-.logo { max-width: 100%; height: auto; display: block; color: var(--text); }
+.logo { max-width: 100%; height: auto; display: block; }
 .nav-section {
   font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600;
   color: var(--muted); padding: 0 10px; margin: 18px 0 6px;
