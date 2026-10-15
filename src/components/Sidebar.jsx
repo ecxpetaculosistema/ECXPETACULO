@@ -23,7 +23,7 @@ export default function Sidebar({ open }) {
         )
       })}
       <div className="sidebar-user">
-        <div className="avatar">RM</div>
+        <div className="avatar">{currentUser.initials}</div>
         <div>
           <strong>{currentUser.name}</strong>
           <small>{currentUser.roleLabel}</small>

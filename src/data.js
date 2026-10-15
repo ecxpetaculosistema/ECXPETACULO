@@ -6,33 +6,33 @@ const day = (n) => {
   return d.toISOString().slice(0, 10)
 }
 
-export const currentUser = { name: 'Rafael Monteiro', role: 'admin', roleLabel: 'Proprietário' }
+export const currentUser = { name: 'Fulano da Silva', initials: 'FS', role: 'admin', roleLabel: 'Proprietário' }
 
 export const people = [
-  { id: 'rm', name: 'Rafael Monteiro', initials: 'RM', color: '#e11d2e' },
-  { id: 'br', name: 'Bianca Rocha', initials: 'BR', color: '#e0833a' },
-  { id: 'hd', name: 'Henrique Dias', initials: 'HD', color: '#3a7be0' },
-  { id: 'mv', name: 'Marina Vaz', initials: 'MV', color: '#2e9e6b' },
+  { id: 'fs', name: 'Fulano da Silva', initials: 'FS', color: '#e11d2e' },
+  { id: 'cs', name: 'Ciclano Souza', initials: 'CS', color: '#e0833a' },
+  { id: 'bl', name: 'Beltrano Lima', initials: 'BL', color: '#3a7be0' },
+  { id: 'sa', name: 'Sicrano Alves', initials: 'SA', color: '#2e9e6b' },
 ]
 
 export const artists = [
-  { id: 'koda', name: 'Koda', initials: 'K' },
-  { id: 'esc', name: 'Escritório', initials: 'NC' },
+  { id: 'art1', name: 'Fulano de Tal', initials: 'FT' },
+  { id: 'esc', name: 'Escritório', initials: 'EX' },
 ]
 
 export const initialTasks = [
-  { id: 1, title: 'Enviar contrato Arena Hall para assinatura', ref: 'Show: Arena Hall', artist: 'koda', owner: 'rm', due: day(0), priority: 'alta', status: 'todo' },
-  { id: 2, title: 'Aprovar rider técnico do Vila Country', ref: 'Show: Vila Country', artist: 'koda', owner: 'hd', due: day(0), priority: 'alta', status: 'doing' },
-  { id: 3, title: 'Fechar hotel da equipe em Curitiba', ref: 'Show: Festival Primavera', artist: 'koda', owner: 'br', due: day(2), priority: 'media', status: 'todo' },
-  { id: 4, title: 'Enviar release e fotos para a imprensa', ref: 'Evento: Entrevista Rádio Mix', artist: 'koda', owner: 'mv', due: day(5), priority: 'media', status: 'todo' },
-  { id: 5, title: 'Revisar proposta Sunset Beach Fest', ref: '', artist: 'esc', owner: 'rm', due: day(7), priority: 'baixa', status: 'doing' },
-  { id: 6, title: 'Registrar NF do cachê Festival Primavera', ref: '', artist: 'koda', owner: 'br', due: day(-6), priority: 'media', status: 'done', doneAt: day(-6) },
-  { id: 7, title: 'Confirmar voo da banda BH → CWB', ref: '', artist: 'koda', owner: 'mv', due: day(-7), priority: 'alta', status: 'done', doneAt: day(-7) },
+  { id: 1, title: 'Enviar contrato Casa de Shows A para assinatura', ref: 'Show: Casa de Shows A', artist: 'art1', owner: 'fs', due: day(0), priority: 'alta', status: 'todo' },
+  { id: 2, title: 'Aprovar rider técnico do Casa de Shows B', ref: 'Show: Casa de Shows B', artist: 'art1', owner: 'bl', due: day(0), priority: 'alta', status: 'doing' },
+  { id: 3, title: 'Fechar hotel da equipe em Curitiba', ref: 'Show: Festival Exemplo', artist: 'art1', owner: 'cs', due: day(2), priority: 'media', status: 'todo' },
+  { id: 4, title: 'Enviar release e fotos para a imprensa', ref: 'Evento: Entrevista Rádio Exemplo', artist: 'art1', owner: 'sa', due: day(5), priority: 'media', status: 'todo' },
+  { id: 5, title: 'Revisar proposta Festival Modelo', ref: '', artist: 'esc', owner: 'fs', due: day(7), priority: 'baixa', status: 'doing' },
+  { id: 6, title: 'Registrar NF do cachê Festival Exemplo', ref: '', artist: 'art1', owner: 'cs', due: day(-6), priority: 'media', status: 'done', doneAt: day(-6) },
+  { id: 7, title: 'Confirmar voo da banda BH → CWB', ref: '', artist: 'art1', owner: 'sa', due: day(-7), priority: 'alta', status: 'done', doneAt: day(-7) },
 ]
 
 // ---- Dashboard (demo) ----
 export const kpis = {
-  proximoShow: { title: 'Arena Hall', date: day(9), city: 'São Paulo · SP' },
+  proximoShow: { title: 'Casa de Shows A', date: day(9), city: 'São Paulo · SP' },
   cacheMes: 485000,
   showsMes: 9,
   horasVoo: 38.5,
@@ -50,8 +50,8 @@ export const showsPorDia = [
   { label: 'Qui', value: 3 }, { label: 'Sex', value: 7 }, { label: 'Sáb', value: 9 }, { label: 'Dom', value: 4 },
 ]
 export const proximosShows = [
-  { id: 1, title: 'Arena Hall', city: 'São Paulo · SP', date: day(9), status: 'confirmado' },
-  { id: 2, title: 'Festival Primavera', city: 'Curitiba · PR', date: day(3), status: 'confirmado' },
-  { id: 3, title: 'Vila Country', city: 'Goiânia · GO', date: day(24), status: 'proposta' },
-  { id: 4, title: 'Sunset Beach Fest', city: 'Florianópolis · SC', date: day(40), status: 'proposta' },
+  { id: 1, title: 'Casa de Shows A', city: 'São Paulo · SP', date: day(9), status: 'confirmado' },
+  { id: 2, title: 'Festival Exemplo', city: 'Curitiba · PR', date: day(3), status: 'confirmado' },
+  { id: 3, title: 'Casa de Shows B', city: 'Goiânia · GO', date: day(24), status: 'proposta' },
+  { id: 4, title: 'Festival Modelo', city: 'Florianópolis · SC', date: day(40), status: 'proposta' },
 ]
