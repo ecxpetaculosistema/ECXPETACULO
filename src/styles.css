@@ -369,3 +369,37 @@ input[type='checkbox']:checked::after { transform: rotate(45deg) scale(1); }
 input[type='checkbox']:disabled { opacity: .35; cursor: not-allowed; }
 .check-opt.is-disabled { opacity: .45; cursor: not-allowed; }
 .check-opt.is-disabled * { cursor: not-allowed; }
+
+/* ---------- Dashboard modular ---------- */
+.dash-tools { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.dash-tools .btn-ghost { margin-left: 0; }
+.dash-tools .btn-ghost:disabled { opacity: .4; cursor: not-allowed; }
+.edit-hint { margin: -4px 0 14px; color: var(--muted); font-size: 13.5px; }
+.dash-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; grid-auto-flow: dense; align-items: stretch; }
+.wd { position: relative; min-width: 0; display: flex; flex-direction: column; }
+.wd > .kpi, .wd > .panel { flex: 1; }
+.wd[data-span='1'] { grid-column: span 1; }
+.wd[data-span='2'] { grid-column: span 2; }
+.wd[data-span='3'] { grid-column: span 3; }
+.wd[data-span='4'] { grid-column: span 4; }
+.full-grid { grid-column: 1 / -1; }
+.wd-kpi { align-self: start; }
+.is-editing .wd { outline: 1px dashed #3a4170; outline-offset: 4px; cursor: grab; }
+.is-editing .wd.dragging { opacity: .4; }
+.is-editing .wd.drop-target { outline: 2px solid var(--brand); }
+.wd-controls { display: flex; align-items: center; gap: 4px; padding: 4px; margin-bottom: 8px; background: var(--surface-2); border: 1px solid var(--border); }
+.wd-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 600; color: var(--muted); padding: 0 6px; }
+.wd-controls button { min-width: 30px; height: 28px; padding: 0 6px; background: var(--surface); border: 1px solid var(--border); font-size: 12px; font-weight: 600; border-radius: 0; }
+.wd-controls button:hover:not(:disabled) { border-color: var(--brand); color: var(--brand-2); }
+.wd-controls button:disabled { opacity: .3; cursor: not-allowed; }
+.is-editing .wd > .kpi, .is-editing .wd > .panel { pointer-events: none; }
+@media (max-width: 1100px) {
+  .dash-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wd[data-span='3'], .wd[data-span='4'] { grid-column: span 2; }
+}
+@media (max-width: 640px) {
+  .dash-grid { grid-template-columns: 1fr; }
+  .wd[data-span] { grid-column: span 1; }
+  .page-head.row { flex-wrap: wrap; gap: 12px; }
+  .dash-tools { justify-content: flex-start; width: 100%; }
+}
