@@ -370,36 +370,40 @@ input[type='checkbox']:disabled { opacity: .35; cursor: not-allowed; }
 .check-opt.is-disabled { opacity: .45; cursor: not-allowed; }
 .check-opt.is-disabled * { cursor: not-allowed; }
 
-/* ---------- Dashboard modular ---------- */
+/* ---------- Dashboard modular (grade com encaixe) ---------- */
 .dash-tools { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .dash-tools .btn-ghost { margin-left: 0; }
 .dash-tools .btn-ghost:disabled { opacity: .4; cursor: not-allowed; }
 .edit-hint { margin: -4px 0 14px; color: var(--muted); font-size: 13.5px; }
-.dash-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; grid-auto-flow: dense; align-items: stretch; }
-.wd { position: relative; min-width: 0; display: flex; flex-direction: column; }
-.wd > .kpi, .wd > .panel { flex: 1; }
-.wd[data-span='1'] { grid-column: span 1; }
-.wd[data-span='2'] { grid-column: span 2; }
-.wd[data-span='3'] { grid-column: span 3; }
-.wd[data-span='4'] { grid-column: span 4; }
-.full-grid { grid-column: 1 / -1; }
-.wd-kpi { align-self: start; }
-.is-editing .wd { outline: 1px dashed #3a4170; outline-offset: 4px; cursor: grab; }
-.is-editing .wd.dragging { opacity: .4; }
-.is-editing .wd.drop-target { outline: 2px solid var(--brand); }
-.wd-controls { display: flex; align-items: center; gap: 4px; padding: 4px; margin-bottom: 8px; background: var(--surface-2); border: 1px solid var(--border); }
-.wd-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 600; color: var(--muted); padding: 0 6px; }
-.wd-controls button { min-width: 30px; height: 28px; padding: 0 6px; background: var(--surface); border: 1px solid var(--border); font-size: 12px; font-weight: 600; border-radius: 0; }
-.wd-controls button:hover:not(:disabled) { border-color: var(--brand); color: var(--brand-2); }
-.wd-controls button:disabled { opacity: .3; cursor: not-allowed; }
+.dash-grid { min-height: 120px; }
+.wd { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.wd > .kpi, .wd > .panel { flex: 1; min-height: 0; overflow: hidden; }
+.wd > .kpi { justify-content: center; }
+.panel { display: flex; flex-direction: column; }
+.chart-box { flex: 1; min-height: 0; min-width: 0; position: relative; }
+.chart-fill { position: absolute; inset: 0; overflow: hidden; }
+.donut { align-items: center; justify-content: center; }
+.list-scroll { flex: 1; min-height: 0; overflow-y: auto; }
+.is-editing .wd { cursor: move; outline: 1px dashed #3a4170; outline-offset: 0; user-select: none; }
 .is-editing .wd > .kpi, .is-editing .wd > .panel { pointer-events: none; }
-@media (max-width: 1100px) {
-  .dash-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .wd[data-span='3'], .wd[data-span='4'] { grid-column: span 2; }
-}
+.react-grid-item.react-grid-placeholder { background: var(--brand); opacity: .2; border-radius: 0; }
+.react-grid-item.react-draggable-dragging, .react-grid-item.resizing { z-index: 5; box-shadow: 0 12px 36px rgba(0, 0, 0, .5); outline: 2px solid var(--brand); }
+.wd-remove { position: absolute; top: 6px; right: 6px; z-index: 6; width: 28px; height: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: 0; font-size: 12px; font-weight: 700; }
+.wd-remove:hover { border-color: var(--red); color: var(--red); }
+/* alças de redimensionamento */
+.react-resizable-handle { background-image: none !important; z-index: 6; }
+.react-resizable-handle::after { display: none !important; }
+.react-resizable-handle-se { width: 22px; height: 22px; right: 0; bottom: 0; cursor: se-resize; }
+.react-resizable-handle-se::before, .react-resizable-handle-sw::before { content: ''; position: absolute; bottom: 4px; width: 12px; height: 12px; border-bottom: 3px solid var(--brand-2); }
+.react-resizable-handle-se::before { right: 4px; border-right: 3px solid var(--brand-2); }
+.react-resizable-handle-sw { width: 22px; height: 22px; left: 0; bottom: 0; cursor: sw-resize; }
+.react-resizable-handle-sw::before { left: 4px; border-left: 3px solid var(--brand-2); }
+.react-resizable-handle-e, .react-resizable-handle-w { width: 12px; top: 0; bottom: 0; margin: 0; height: auto; }
+.react-resizable-handle-e { right: 0; cursor: ew-resize; }
+.react-resizable-handle-w { left: 0; cursor: ew-resize; }
+.react-resizable-handle-s { height: 12px; left: 0; right: 0; bottom: 0; margin: 0; width: auto; cursor: ns-resize; }
+.react-resizable-handle-e:hover, .react-resizable-handle-w:hover, .react-resizable-handle-s:hover { background: rgba(225, 29, 46, .35); }
 @media (max-width: 640px) {
-  .dash-grid { grid-template-columns: 1fr; }
-  .wd[data-span] { grid-column: span 1; }
   .page-head.row { flex-wrap: wrap; gap: 12px; }
   .dash-tools { justify-content: flex-start; width: 100%; }
 }
