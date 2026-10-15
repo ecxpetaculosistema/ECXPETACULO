@@ -35,7 +35,7 @@ export function Donut({ data, size = 150 }) {
           const len = (d.value / total) * c
           const el = (
             <circle key={d.label} cx="70" cy="70" r={r} fill="none" stroke={d.color} strokeWidth="16"
-              strokeDasharray={`${Math.max(len - 3, 0)} ${c}`} strokeDashoffset={-acc} transform="rotate(-90 70 70)" strokeLinecap="round" />
+              strokeDasharray={`${Math.max(len - 3, 0)} ${c}`} strokeDashoffset={-acc} transform="rotate(-90 70 70)" strokeLinecap="butt" />
           )
           acc += len
           return el

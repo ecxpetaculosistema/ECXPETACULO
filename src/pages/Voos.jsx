@@ -186,8 +186,8 @@ function MissionForm({ initial, onSave, onNext, onRemove, onClose }) {
 
           <fieldset className="f-group">
             <legend>Decolagem</legend>
-            <label className="check-opt base-opt full-row">
-              <input type="checkbox" checked={m.decolaBase} onChange={(e) => toggleBase('decola', e.target.checked)} /> Saída da base (ida)
+            <label className={'check-opt base-opt full-row' + (m.pousaBase ? ' is-disabled' : '')}>
+              <input type="checkbox" checked={m.decolaBase} disabled={m.pousaBase} onChange={(e) => toggleBase('decola', e.target.checked)} /> Saída da base (ida)
             </label>
             <label className="f">
               <span>Aeroporto (sigla)</span>
@@ -210,8 +210,8 @@ function MissionForm({ initial, onSave, onNext, onRemove, onClose }) {
 
           <fieldset className="f-group">
             <legend>Pouso</legend>
-            <label className="check-opt base-opt full-row">
-              <input type="checkbox" checked={m.pousaBase} onChange={(e) => toggleBase('pousa', e.target.checked)} /> Chegada na base (volta)
+            <label className={'check-opt base-opt full-row' + (m.decolaBase ? ' is-disabled' : '')}>
+              <input type="checkbox" checked={m.pousaBase} disabled={m.decolaBase} onChange={(e) => toggleBase('pousa', e.target.checked)} /> Chegada na base (volta)
             </label>
             <label className="f">
               <span>Aeroporto (sigla)</span>
