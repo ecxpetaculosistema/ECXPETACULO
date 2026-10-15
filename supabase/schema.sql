@@ -43,13 +43,24 @@ create table shows (
   artist_id uuid references artists not null,
   contractor_id uuid references contractors,
   title text not null,
-  venue text, city text, state text,
+  venue text, venue_address text,
+  city text, state text,
+  artist_hotel_name text, artist_hotel_address text,
+  band_hotel_name text, band_hotel_address text,
+  contractor_phone text,
   show_date date not null,
   load_in time, soundcheck time, start_time time,
   status show_status not null default 'proposta',
   fee numeric(12,2) default 0,      -- cachê
   notes text,
   created_at timestamptz default now()
+);
+
+-- Responsáveis no local do evento (nome, função e telefone)
+create table show_contacts (
+  id uuid primary key default gen_random_uuid(),
+  show_id uuid references shows on delete cascade not null,
+  name text not null, role text, phone text
 );
 
 -- Financeiro (somente admin)
@@ -145,7 +156,7 @@ create table checklists (
 do $$
 declare t text;
 begin
-  foreach t in array array['profiles','artists','contractors','contacts','shows','show_payments','show_costs',
+  foreach t in array array['profiles','artists','contractors','contacts','shows','show_contacts','show_payments','show_costs',
     'crew_members','show_crew','riders','logistics','tasks','aircraft','flights','flight_costs','checklists']
   loop execute format('alter table %I enable row level security', t); end loop;
 end $$;
@@ -154,7 +165,7 @@ end $$;
 do $$
 declare t text;
 begin
-  foreach t in array array['artists','contractors','contacts','shows','show_payments','show_costs',
+  foreach t in array array['artists','contractors','contacts','shows','show_contacts','show_payments','show_costs',
     'crew_members','show_crew','riders','logistics','tasks','aircraft','flights','flight_costs','checklists']
   loop execute format('create policy "admin all" on %I for all to authenticated
     using (current_role_name() = ''admin'') with check (current_role_name() = ''admin'')', t); end loop;
@@ -164,7 +175,7 @@ end $$;
 do $$
 declare t text;
 begin
-  foreach t in array array['artists','contractors','contacts','shows','crew_members','show_crew','riders','logistics','tasks']
+  foreach t in array array['artists','contractors','contacts','shows','show_contacts','crew_members','show_crew','riders','logistics','tasks']
   loop execute format('create policy "producao all" on %I for all to authenticated
     using (current_role_name() = ''producao'') with check (current_role_name() = ''producao'')', t); end loop;
 end $$;

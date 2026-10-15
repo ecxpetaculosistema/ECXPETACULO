@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar.jsx'
 import Topbar from './components/Topbar.jsx'
 import Tarefas from './pages/Tarefas.jsx'
 import Dashboard from './pages/Dashboard.jsx'
+import Agenda from './pages/Agenda.jsx'
 import Placeholder from './pages/Placeholder.jsx'
 import { nav } from './nav.js'
 
@@ -22,9 +23,10 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/agenda" element={<Agenda />} />
             <Route path="/tarefas" element={<Tarefas />} />
             {pages
-              .filter((p) => p.path !== '/tarefas' && p.path !== '/dashboard')
+              .filter((p) => !['/tarefas', '/dashboard', '/agenda'].includes(p.path))
               .map((p) => (
                 <Route key={p.path} path={p.path} element={<Placeholder title={p.label} />} />
               ))}
