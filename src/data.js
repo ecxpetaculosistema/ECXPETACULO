@@ -92,7 +92,7 @@ export const agendaShows = [
     responsaveis: [{ nome: 'Ciclano Souza', funcao: 'Gerente da casa', telefone: '(11) 90000-0007' }],
   },
   {
-    id: 'a4', date: day(16), city: 'Belo Horizonte', uf: 'MG', event: 'Evento Corporativo Modelo', status: 'confirmado',
+    id: 'a4', tipo: 'evento', date: day(16), city: 'Belo Horizonte', uf: 'MG', event: 'Evento Corporativo Modelo', status: 'confirmado',
     obs: 'Show de 1h30. Evento fechado, sem divulgação.',
     horarios: { chegada: '17:00', passagem: '19:00', show: '21:30' },
     local: { nome: 'Centro de Convenções Exemplo', endereco: 'Av. Afonso Pena, 2000 - Funcionários, Belo Horizonte - MG' },
@@ -120,5 +120,15 @@ export const agendaShows = [
     hotelBanda: { nome: '', endereco: '' },
     contratante: { nome: 'Produtora Modelo', telefone: '(48) 90000-0011' },
     responsaveis: [],
+  },
+  {
+    id: 'a7', tipo: 'evento', date: day(6), city: 'Ribeirão Preto', uf: 'SP', event: 'Jantar Beneficente Exemplo', status: 'confirmado',
+    obs: 'Apresentação curta, formato acústico.',
+    horarios: { chegada: '18:00', passagem: '19:00', show: '21:00' },
+    local: { nome: 'Clube Exemplo', endereco: 'Av. Modelo, 300 - Centro, Ribeirão Preto - SP' },
+    hotelArtista: { nome: 'Hotel Modelo', endereco: 'Rua Central, 50 - Centro, Ribeirão Preto - SP' },
+    hotelBanda: { nome: 'Hotel Modelo', endereco: 'Rua Central, 50 - Centro, Ribeirão Preto - SP' },
+    contratante: { nome: 'Ciclano Souza', telefone: '(16) 90000-0012' },
+    responsaveis: [{ nome: 'Sicrano Alves', funcao: 'Cerimonial', telefone: '(16) 90000-0013' }],
   },
 ]

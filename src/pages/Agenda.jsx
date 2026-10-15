@@ -1,42 +1,44 @@
 import { useEffect, useMemo, useState } from 'react'
 import { agendaShows } from '../data.js'
 
+const pad = (n) => String(n).padStart(2, '0')
+const isoOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 const parse = (iso) => {
   const [y, m, d] = iso.split('-').map(Number)
   return new Date(y, m - 1, d)
 }
-const fmtDate = (iso) => parse(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
-const weekday = (iso) => {
-  const w = parse(iso).toLocaleDateString('pt-BR', { weekday: 'long' }).replace('-', ' ')
-  return w[0].toUpperCase() + w.slice(1)
-}
-const monthLabel = (iso) => {
-  const l = parse(iso).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
-  return l[0].toUpperCase() + l.slice(1)
-}
-const today = () => new Date().toISOString().slice(0, 10)
+const fmtDate = (iso) => iso.split('-').reverse().join('/')
+const cap = (t) => t[0].toUpperCase() + t.slice(1)
+const weekday = (iso) => cap(parse(iso).toLocaleDateString('pt-BR', { weekday: 'long' }).replace('-', ' '))
+const todayIso = () => isoOf(new Date())
 const STATUS = { confirmado: 'Confirmado', proposta: 'Proposta', realizado: 'Realizado' }
 const mapsUrl = (q) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`
 const telUrl = (t) => 'tel:' + t.replace(/[^\d+]/g, '')
 
 export default function Agenda() {
   const [selected, setSelected] = useState(null)
-  const [showPast, setShowPast] = useState(false)
-  const [query, setQuery] = useState('')
+  const [offset, setOffset] = useState(0) // 0 = mês atual
+  const [showAll, setShowAll] = useState(false)
 
-  const rows = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return [...agendaShows]
-      .sort((a, b) => a.date.localeCompare(b.date))
-      .filter((s) => showPast || s.date >= today())
-      .filter((s) => !q || `${s.city} ${s.uf} ${s.event} ${s.obs}`.toLowerCase().includes(q))
-  }, [showPast, query])
+  const today = todayIso()
+  const base = new Date(new Date().getFullYear(), new Date().getMonth() + offset, 1)
+  const title = cap(base.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }))
+  // No mês atual os dias que já passaram saem da lista (a menos que "ver mês completo" esteja ligado).
+  const hidePast = offset === 0 && !showAll
 
-  const groups = rows.reduce((acc, s) => {
-    const k = monthLabel(s.date)
-    ;(acc[k] = acc[k] || []).push(s)
-    return acc
-  }, {})
+  const { days, count } = useMemo(() => {
+    const total = new Date(base.getFullYear(), base.getMonth() + 1, 0).getDate()
+    const list = []
+    let n = 0
+    for (let d = 1; d <= total; d++) {
+      const iso = isoOf(new Date(base.getFullYear(), base.getMonth(), d))
+      const events = agendaShows.filter((s) => s.date === iso)
+      n += events.length
+      if (hidePast && iso < today) continue
+      list.push({ iso, events })
+    }
+    return { days: list, count: n }
+  }, [offset, hidePast, today])
 
   return (
     <>
@@ -46,34 +48,58 @@ export default function Agenda() {
       </div>
 
       <div className="agenda-tools">
-        <input className="search" placeholder="Buscar cidade, evento ou observação" value={query} onChange={(e) => setQuery(e.target.value)} />
-        <label className="toggle">
-          <input type="checkbox" checked={showPast} onChange={(e) => setShowPast(e.target.checked)} /> Mostrar shows passados
-        </label>
+        <div className="month-nav">
+          <button onClick={() => setOffset(offset - 1)} aria-label="Mês anterior">‹</button>
+          <strong>{title}</strong>
+          <button onClick={() => setOffset(offset + 1)} aria-label="Próximo mês">›</button>
+        </div>
+        <span className="muted-sm">{count} {count === 1 ? 'evento' : 'eventos'} no mês</span>
+        {offset !== 0 && <button className="btn-ghost" onClick={() => setOffset(0)}>Voltar ao mês atual</button>}
+        {offset === 0 && (
+          <button className="btn-ghost" onClick={() => setShowAll(!showAll)}>
+            {showAll ? 'Mostrar só os próximos' : 'Ver mês completo'}
+          </button>
+        )}
       </div>
 
       <div className="card agenda">
         <div className="agenda-head">
-          <span>Data</span><span>Dia da semana</span><span>Cidade / UF</span><span>Evento</span><span>Observações</span>
+          <span>Dia da semana</span><span>Data</span><span>Cidade / UF</span><span>Evento</span><span>Observações</span>
         </div>
-        {rows.length === 0 && <div className="empty">Nenhum show encontrado.</div>}
-        {Object.entries(groups).map(([month, list]) => (
-          <div key={month}>
-            <div className="agenda-month">{month}</div>
-            {list.map((s) => (
-              <div key={s.id} className={'agenda-row' + (s.date < today() ? ' past' : '')}>
-                <span className="a-date">{fmtDate(s.date)}</span>
-                <span className="a-week">{weekday(s.date)}</span>
-                <span className="a-city">{s.city} / {s.uf}</span>
-                <span className="a-event">
-                  <button className="event-link" onClick={() => setSelected(s)}>{s.event}</button>
-                  <span className={'badge ' + s.status}>{STATUS[s.status]}</span>
-                </span>
-                <span className="a-obs">{s.obs}</span>
+        {days.length === 0 && <div className="empty">Nenhum dia restante neste mês. Use “Ver mês completo” ou avance de mês.</div>}
+        {days.map(({ iso, events }) => {
+          const dow = parse(iso).getDay()
+          const weekend = dow === 0 || dow === 6
+          const dayCls = 'd-week' + (weekend ? ' weekend' : '')
+          if (!events.length) {
+            return (
+              <div key={iso} className={'agenda-row empty-day' + (iso === today ? ' is-today' : '')}>
+                <span className={dayCls}>{weekday(iso)}</span>
+                <span className={'d-date' + (weekend ? ' weekend' : '')}>{fmtDate(iso)}</span>
+                <span /><span /><span />
               </div>
-            ))}
-          </div>
-        ))}
+            )
+          }
+          return events.map((s) => (
+            <div
+              key={s.id}
+              className={`agenda-row has-event tipo-${s.tipo || 'show'}` + (iso === today ? ' is-today' : '')}
+              role="button" tabIndex={0}
+              onClick={() => setSelected(s)}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSelected(s)}
+            >
+              <span className={dayCls}>{weekday(iso)}</span>
+              <span className={'d-date' + (weekend ? ' weekend' : '')}>{fmtDate(iso)}</span>
+              <span className="d-city">{s.city} / {s.uf}</span>
+              <span className="d-event">{s.event}{s.status === 'proposta' && <em className="tag-prop">proposta</em>}</span>
+              <span className="d-obs">{s.obs}</span>
+            </div>
+          ))
+        })}
+      </div>
+      <div className="agenda-legend">
+        <i className="lg-show" /> Show <i className="lg-evento" /> Evento / corporativo
+        <span className="muted-sm"> · Clique em um evento para ver os detalhes</span>
       </div>
 
       {selected && <ShowModal show={selected} onClose={() => setSelected(null)} />}
