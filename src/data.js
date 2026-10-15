@@ -29,3 +29,29 @@ export const initialTasks = [
   { id: 6, title: 'Registrar NF do cachê Festival Primavera', ref: '', artist: 'koda', owner: 'br', due: day(-6), priority: 'media', status: 'done', doneAt: day(-6) },
   { id: 7, title: 'Confirmar voo da banda BH → CWB', ref: '', artist: 'koda', owner: 'mv', due: day(-7), priority: 'alta', status: 'done', doneAt: day(-7) },
 ]
+
+// ---- Dashboard (demo) ----
+export const kpis = {
+  proximoShow: { title: 'Arena Hall', date: day(9), city: 'São Paulo · SP' },
+  cacheMes: 485000,
+  showsMes: 9,
+  horasVoo: 38.5,
+}
+export const receitaMensal = [210, 260, 240, 310, 380, 350, 420, 485].map((v, i) => ({
+  label: ['Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out'][i], value: v,
+}))
+export const showsPorStatus = [
+  { label: 'Confirmado', value: 9, color: '#22d3ee' },
+  { label: 'Proposta', value: 5, color: '#e11d2e' },
+  { label: 'Realizado', value: 14, color: '#6366f1' },
+]
+export const showsPorDia = [
+  { label: 'Seg', value: 1 }, { label: 'Ter', value: 0 }, { label: 'Qua', value: 2 },
+  { label: 'Qui', value: 3 }, { label: 'Sex', value: 7 }, { label: 'Sáb', value: 9 }, { label: 'Dom', value: 4 },
+]
+export const proximosShows = [
+  { id: 1, title: 'Arena Hall', city: 'São Paulo · SP', date: day(9), status: 'confirmado' },
+  { id: 2, title: 'Festival Primavera', city: 'Curitiba · PR', date: day(3), status: 'confirmado' },
+  { id: 3, title: 'Vila Country', city: 'Goiânia · GO', date: day(24), status: 'proposta' },
+  { id: 4, title: 'Sunset Beach Fest', city: 'Florianópolis · SC', date: day(40), status: 'proposta' },
+]
