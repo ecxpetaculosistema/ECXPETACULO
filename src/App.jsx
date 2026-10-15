@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import Sidebar from './components/Sidebar.jsx'
 import Topbar from './components/Topbar.jsx'
 import Tarefas from './pages/Tarefas.jsx'
@@ -8,11 +9,15 @@ import { nav } from './nav.js'
 
 export default function App() {
   const pages = nav.flatMap((s) => s.items)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const { pathname } = useLocation()
+  useEffect(() => setMenuOpen(false), [pathname])
   return (
     <div className="shell">
-      <Sidebar />
+      <Sidebar open={menuOpen} />
+      {menuOpen && <div className="backdrop" onClick={() => setMenuOpen(false)} />}
       <div className="main">
-        <Topbar />
+        <Topbar onMenu={() => setMenuOpen((o) => !o)} />
         <div className="content">
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />

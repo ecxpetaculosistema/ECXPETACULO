@@ -3,9 +3,9 @@ import { nav } from '../nav.js'
 import { currentUser } from '../data.js'
 import Logo from './Logo.jsx'
 
-export default function Sidebar() {
+export default function Sidebar({ open }) {
   return (
-    <aside className="sidebar">
+    <aside className={'sidebar' + (open ? ' open' : '')}>
       <div className="brand"><Logo /></div>
       {nav.map((group, i) => {
         const items = group.items.filter((it) => it.roles.includes(currentUser.role))

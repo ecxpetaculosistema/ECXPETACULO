@@ -65,6 +65,9 @@ h1, h2, h3 { margin: 0; }
   position: sticky; top: 0; z-index: 5;
 }
 .company { font-weight: 600; }
+.menu-btn, .topbar-logo { display: none; }
+.menu-btn { background: none; border: 1px solid var(--border); border-radius: 8px; width: 38px; height: 38px; font-size: 18px; }
+.backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, .55); z-index: 15; }
 .content { padding: 28px; max-width: 1500px; }
 .page-head.row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
 .page-title { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
@@ -187,12 +190,17 @@ h1, h2, h3 { margin: 0; }
   .grid-2 { grid-template-columns: 1fr; }
 }
 @media (max-width: 900px) {
-  .sidebar { display: none; }
+  .sidebar { position: fixed; left: 0; top: 0; z-index: 20; width: 270px; transform: translateX(-100%); transition: transform .2s; }
+  .sidebar.open { transform: translateX(0); }
+  .menu-btn, .topbar-logo { display: block; }
+  .topbar { gap: 12px; padding: 0 16px; }
+  .company { margin-left: auto; font-size: 13px; color: var(--muted); }
   .content { padding: 16px; }
   .tasks { grid-template-columns: 1fr; }
   .filters { border-right: 0; border-bottom: 1px solid var(--border); }
   .kanban { grid-template-columns: 1fr; }
 }
 @media (max-width: 520px) {
+  .company { display: none; }
   .kpis { grid-template-columns: 1fr; }
 }
