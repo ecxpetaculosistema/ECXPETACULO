@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { agendaShows } from '../data.js'
+import ShowForm, { emptyShow } from '../components/ShowForm.jsx'
+import { deleteShow, saveShow, useShows } from '../store.js'
 
 const pad = (n) => String(n).padStart(2, '0')
 const isoOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
@@ -11,12 +12,16 @@ const fmtDate = (iso) => iso.split('-').reverse().join('/')
 const cap = (t) => t[0].toUpperCase() + t.slice(1)
 const weekday = (iso) => cap(parse(iso).toLocaleDateString('pt-BR', { weekday: 'long' }).replace('-', ' '))
 const todayIso = () => isoOf(new Date())
+const brl = (v) => (parseFloat(String(v).replace(/\./g, '').replace(',', '.')) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+const fmtSize = (b) => (b >= 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`)
 const STATUS = { confirmado: 'Confirmado', proposta: 'Proposta', realizado: 'Realizado' }
 const mapsUrl = (q) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`
 const telUrl = (t) => 'tel:' + t.replace(/[^\d+]/g, '')
 
 export default function Agenda() {
+  const shows = useShows()
   const [selected, setSelected] = useState(null)
+  const [form, setForm] = useState(null) // show em edição (ou novo)
   const [offset, setOffset] = useState(0) // 0 = mês atual
   const [showAll, setShowAll] = useState(false)
 
@@ -32,19 +37,29 @@ export default function Agenda() {
     let n = 0
     for (let d = 1; d <= total; d++) {
       const iso = isoOf(new Date(base.getFullYear(), base.getMonth(), d))
-      const events = agendaShows.filter((s) => s.date === iso)
+      const events = shows.filter((s) => s.date === iso)
       n += events.length
       if (hidePast && iso < today) continue
       list.push({ iso, events })
     }
     return { days: list, count: n }
-  }, [offset, hidePast, today])
+  }, [offset, hidePast, today, shows])
+
+  // Depois de salvar, mostra o mês do show para o usuário ver onde ele ficou.
+  const onSave = (show) => {
+    saveShow(show)
+    setForm(null)
+    const d = parse(show.date)
+    const now = new Date()
+    setOffset((d.getFullYear() - now.getFullYear()) * 12 + d.getMonth() - now.getMonth())
+    if (show.date < todayIso()) setShowAll(true)
+  }
 
   return (
     <>
       <div className="page-head row">
         <h1 className="page-title">Agenda de shows</h1>
-        <button className="btn-primary">+ Novo show</button>
+        <button className="btn-primary" onClick={() => setForm(emptyShow())}>+ Novo show</button>
       </div>
 
       <div className="agenda-tools">
@@ -102,7 +117,17 @@ export default function Agenda() {
         <span className="muted-sm"> · Clique em um evento para ver os detalhes</span>
       </div>
 
-      {selected && <ShowModal show={selected} onClose={() => setSelected(null)} />}
+      {selected && (
+        <ShowModal
+          show={shows.find((x) => x.id === selected.id) || selected}
+          onClose={() => setSelected(null)}
+          onEdit={(sh) => { setSelected(null); setForm(sh) }}
+          onDelete={(sh) => {
+            if (window.confirm(`Excluir o show “${sh.event}”?`)) { deleteShow(sh.id); setSelected(null) }
+          }}
+        />
+      )}
+      {form && <ShowForm key={form.id || 'novo'} initial={form} onSave={onSave} onClose={() => setForm(null)} />}
     </>
   )
 }
@@ -126,14 +151,17 @@ const Address = ({ nome, endereco }) =>
     <span className="dim">Não informado</span>
   )
 
-const Phone = ({ nome, telefone, funcao }) => (
-  <>
-    <b>{nome}</b>{funcao && <span className="dim">{funcao}</span>}
-    <a href={telUrl(telefone)}>{telefone}</a>
-  </>
-)
+const Phone = ({ nome, telefone, funcao }) =>
+  nome || telefone ? (
+    <>
+      {nome && <b>{nome}</b>}{funcao && <span className="dim">{funcao}</span>}
+      {telefone && <a href={telUrl(telefone)}>{telefone}</a>}
+    </>
+  ) : (
+    <span className="dim">Não informado</span>
+  )
 
-function ShowModal({ show: s, onClose }) {
+function ShowModal({ show: s, onClose, onEdit, onDelete }) {
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose()
     window.addEventListener('keydown', onKey)
@@ -166,11 +194,27 @@ function ShowModal({ show: s, onClose }) {
           <Field label="Endereço do hotel da banda"><Address {...s.hotelBanda} /></Field>
           <Field label="Telefone do contratante"><Phone {...s.contratante} /></Field>
           <Field label="Responsáveis no local">
-            {s.responsaveis.length ? s.responsaveis.map((r) => <div key={r.telefone} className="resp"><Phone {...r} /></div>) : <span className="dim">Não informado</span>}
+            {s.responsaveis.length ? s.responsaveis.map((r, i) => <div key={i} className="resp"><Phone {...r} /></div>) : <span className="dim">Não informado</span>}
+          </Field>
+          {s.cache && <Field label="Cachê"><b>{brl(s.cache)}</b></Field>}
+          <Field label="Contrato e documentos">
+            {s.contratos && s.contratos.length ? (
+              s.contratos.map((c, i) => (
+                <div key={i} className="resp">
+                  {c.url ? <a href={c.url} target="_blank" rel="noreferrer" download={c.name}>{c.name}</a> : <b>{c.name}</b>}
+                  <span className="dim">{fmtSize(c.size)}{!c.url && ' · reenvie o arquivo para abrir (demonstração)'}</span>
+                </div>
+              ))
+            ) : <span className="dim">Nenhum arquivo anexado</span>}
           </Field>
         </div>
 
         {s.obs && <Field label="Observações"><span>{s.obs}</span></Field>}
+
+        <div className="form-actions">
+          <button className="btn-danger" onClick={() => onDelete(s)}>Excluir</button>
+          <button className="btn-ghost" onClick={() => onEdit(s)}>Editar show</button>
+        </div>
       </div>
     </div>
   )

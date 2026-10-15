@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { agendaShows, baseAeronave, initialMissions } from '../data.js'
+import { baseAeronave, initialMissions } from '../data.js'
+import { getShows } from '../store.js'
 
 const TIPOS = { show: 'Show', privado: 'Voo privado', extra: 'Extra' }
 const pad = (n) => String(n).padStart(2, '0')
@@ -8,7 +9,7 @@ const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${pad(
 const num = (v) => parseFloat(String(v).replace(/\./g, '').replace(',', '.')) || 0
 const brl = (v) => (typeof v === 'number' ? v : num(v)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 const showLabel = (s) => `${fmtDate(s.date)} · ${s.city}/${s.uf} · ${s.event}`
-const showById = (id) => agendaShows.find((s) => s.id === id)
+const showById = (id) => getShows().find((s) => s.id === id)
 
 const emptyMission = (tipo) => ({
   id: null, tipo, showId: '', motivo: '', data: todayIso(),
@@ -127,7 +128,7 @@ function MissionForm({ initial, onSave, onNext, onRemove, onClose }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
-  const shows = [...agendaShows].sort((a, b) => a.date.localeCompare(b.date))
+  const shows = [...getShows()].sort((a, b) => a.date.localeCompare(b.date))
   const pickShow = (id) => {
     const s = showById(id)
     set({ showId: id, ...(s ? { data: s.date } : {}) })

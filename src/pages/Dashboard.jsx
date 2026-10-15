@@ -4,8 +4,9 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { AreaChart, Bars, ChartBox, Donut } from '../components/Charts.jsx'
 import {
-  agendaShows, initialMissions, initialTasks, kpis, people, proximosShows, receitaMensal, showsPorDia, showsPorStatus,
+  initialMissions, initialTasks, kpis, people, proximosShows, receitaMensal, showsPorDia, showsPorStatus,
 } from '../data.js'
+import { getShows } from '../store.js'
 
 const brl = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })
 const fmt = (iso) => iso.split('-').reverse().slice(0, 2).join('/')
@@ -18,7 +19,7 @@ const GAP = 16
 
 const upcomingMissions = () =>
   [...initialMissions].sort((a, b) => a.data.localeCompare(b.data)).slice(0, 4).map((m) => {
-    const s = agendaShows.find((x) => x.id === m.showId)
+    const s = getShows().find((x) => x.id === m.showId)
     return { ...m, title: m.tipo === 'show' ? (s ? `${s.event} · ${s.city}/${s.uf}` : 'Show') : m.motivo }
   })
 const openTasks = () => initialTasks.filter((t) => t.status !== 'done').sort((a, b) => a.due.localeCompare(b.due)).slice(0, 5)
