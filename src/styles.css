@@ -292,7 +292,7 @@ h1, h2, h3 { margin: 0; }
 .agenda-tools .hint { margin-left: auto; }
 .total { color: var(--text); }
 .voos { overflow: hidden; }
-.voos-head, .voos-row { display: grid; grid-template-columns: 110px 120px minmax(200px, 1.6fr) 130px 120px 90px 120px; align-items: center; gap: 0; }
+.voos-head, .voos-row { display: grid; grid-template-columns: 105px 115px minmax(180px, 1.6fr) 180px 115px 80px 115px 150px; align-items: center; gap: 0; }
 .voos-head > span, .voos-row > span { padding: 11px 14px; }
 .voos-head { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
 .voos-row { border-bottom: 1px solid var(--border); cursor: pointer; font-size: 14.5px; }
@@ -333,7 +333,9 @@ h1, h2, h3 { margin: 0; }
   .voos-row > span { padding: 5px 14px; }
   .voos-row > span:first-child { padding-top: 12px; }
   .voos-row > span:last-child { padding-bottom: 12px; }
-  .v-title { grid-column: 1 / -1; order: 3; }
+  .v-title { grid-column: 1 / -1; }
+  .v-act { grid-column: 1 / -1; padding-bottom: 12px !important; }
+  .voos-row > span:nth-child(6)::before { content: 'Pernoite: '; color: var(--muted); }
   .v-val { text-align: right; }
   .agenda-tools .hint { margin-left: 0; }
 }
@@ -341,3 +343,14 @@ h1, h2, h3 { margin: 0; }
   .form-grid, .f-group { grid-template-columns: 1fr; }
   .f-group { grid-column: 1 / -1; }
 }
+
+.v-route { white-space: nowrap; }
+.base-tag { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .04em; color: var(--cyan); text-transform: uppercase; margin-top: 2px; }
+.btn-mini { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 12.5px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.btn-mini:hover { border-color: var(--brand); color: var(--brand-2); }
+.tipo-switch { margin-top: 8px; display: inline-flex; }
+.tipo-switch button { padding: 6px 14px; font-size: 13px; }
+.f-group .full-row { grid-column: 1 / -1; }
+.base-opt { font-size: 13.5px; color: var(--cyan); font-weight: 600; }
+.form-actions .btn-ghost:disabled { opacity: .4; cursor: not-allowed; }
+.form-actions { flex-wrap: wrap; }

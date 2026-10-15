@@ -160,3 +160,6 @@ export const initialMissions = [
     hangar: false, patio: false, pernoite: false, valor: '4200', obs: '',
   },
 ]
+
+// Base da aeronave (dados fictícios). Usada no preenchimento automático de "saída da base" / "chegada na base".
+export const baseAeronave = { sigla: 'SBMT', nome: 'Equipe da base', telefone: '(11) 90000-0100' }

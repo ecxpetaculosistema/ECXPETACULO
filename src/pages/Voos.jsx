@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { agendaShows, initialMissions } from '../data.js'
+import { agendaShows, baseAeronave, initialMissions } from '../data.js'
 
 const TIPOS = { show: 'Show', privado: 'Voo privado', extra: 'Extra' }
 const pad = (n) => String(n).padStart(2, '0')
@@ -14,7 +14,16 @@ const emptyMission = (tipo) => ({
   id: null, tipo, showId: '', motivo: '', data: todayIso(),
   decola: { sigla: '', hora: '' }, pousa: { sigla: '', hora: '' },
   respDecola: { nome: '', telefone: '' }, respPousa: { nome: '', telefone: '' },
+  decolaBase: false, pousaBase: false,
   hangar: false, patio: false, pernoite: false, valor: '', obs: '',
+})
+
+// Próxima etapa: decolagem = pouso da missão anterior (mesmo aeroporto e mesmo responsável).
+const nextMission = (prev) => ({
+  ...emptyMission(prev.tipo),
+  showId: prev.showId, motivo: prev.motivo, data: prev.data,
+  decola: { sigla: prev.pousa.sigla, hora: '' },
+  respDecola: { ...prev.respPousa },
 })
 
 const missionTitle = (m) => {
@@ -43,6 +52,11 @@ export default function Voos() {
   const save = (m) => {
     setMissions((ms) => (m.id ? ms.map((x) => (x.id === m.id ? m : x)) : [...ms, { ...m, id: 'm' + Date.now() }]))
     setEditing(null)
+  }
+  const saveAndNext = (m) => {
+    const saved = { ...m, id: m.id || 'm' + Date.now() }
+    setMissions((ms) => (m.id ? ms.map((x) => (x.id === m.id ? saved : x)) : [...ms, saved]))
+    setEditing(nextMission(saved))
   }
   const remove = (id) => {
     setMissions((ms) => ms.filter((x) => x.id !== id))
@@ -73,7 +87,7 @@ export default function Voos() {
 
       <div className="card voos">
         <div className="voos-head">
-          <span>Data</span><span>Tipo</span><span>Missão</span><span>Rota</span><span>Horários</span><span>Pernoite</span><span>Valor</span>
+          <span>Data</span><span>Tipo</span><span>Missão</span><span>Rota</span><span>Horários</span><span>Pernoite</span><span>Valor</span><span />
         </div>
         {sorted.length === 0 && <div className="empty">Nenhuma missão cadastrada.</div>}
         {sorted.map((m) => (
@@ -82,20 +96,27 @@ export default function Voos() {
             <span className="v-date">{fmtDate(m.data)}</span>
             <span><em className={'tipo-tag ' + m.tipo}>{TIPOS[m.tipo]}</em></span>
             <span className="v-title">{missionTitle(m)}</span>
-            <span className="v-route">{m.decola.sigla || '—'} → {m.pousa.sigla || '—'}</span>
+            <span className="v-route">
+              {m.decola.sigla || '—'} → {m.pousa.sigla || '—'}
+              {m.decolaBase && <small className="base-tag">saída da base</small>}
+              {m.pousaBase && <small className="base-tag">chegada na base</small>}
+            </span>
             <span className="v-times">{m.decola.hora || '--:--'} / {m.pousa.hora || '--:--'}</span>
             <span>{m.pernoite ? 'Sim' : 'Não'}</span>
             <span className="v-val">{brl(m.valor)}</span>
+            <span className="v-act">
+              <button className="btn-mini" onClick={(e) => { e.stopPropagation(); setEditing(nextMission(m)) }}>+ Missão seguinte</button>
+            </span>
           </div>
         ))}
       </div>
 
-      {editing && <MissionForm initial={editing} onSave={save} onRemove={remove} onClose={() => setEditing(null)} />}
+      {editing && <MissionForm key={editing.id || editing.decola.sigla + editing.data + editing.tipo} initial={editing} onSave={save} onNext={saveAndNext} onRemove={remove} onClose={() => setEditing(null)} />}
     </>
   )
 }
 
-function MissionForm({ initial, onSave, onRemove, onClose }) {
+function MissionForm({ initial, onSave, onNext, onRemove, onClose }) {
   const [m, setM] = useState(initial)
   const set = (patch) => setM((x) => ({ ...x, ...patch }))
   const setIn = (key, patch) => setM((x) => ({ ...x, [key]: { ...x[key], ...patch } }))
@@ -111,6 +132,14 @@ function MissionForm({ initial, onSave, onRemove, onClose }) {
     const s = showById(id)
     set({ showId: id, ...(s ? { data: s.date } : {}) })
   }
+  const toggleBase = (side, on) => {
+    const [key, rk, flag] = side === 'decola' ? ['decola', 'respDecola', 'decolaBase'] : ['pousa', 'respPousa', 'pousaBase']
+    setM((x) => {
+      if (on) return { ...x, [flag]: true, [key]: { ...x[key], sigla: baseAeronave.sigla }, [rk]: { nome: baseAeronave.nome, telefone: baseAeronave.telefone } }
+      const sameResp = x[rk].nome === baseAeronave.nome && x[rk].telefone === baseAeronave.telefone
+      return { ...x, [flag]: false, [key]: x[key].sigla === baseAeronave.sigla ? { ...x[key], sigla: '' } : x[key], [rk]: sameResp ? { nome: '', telefone: '' } : x[rk] }
+    })
+  }
   const motivoOk = m.tipo === 'show' ? !!m.showId : !!m.motivo.trim()
   const valid = motivoOk && m.decola.sigla.length >= 3 && m.pousa.sigla.length >= 3
 
@@ -121,7 +150,11 @@ function MissionForm({ initial, onSave, onRemove, onClose }) {
         <div className="modal-head">
           <div>
             <h2>{initial.id ? 'Editar missão' : 'Nova missão'}</h2>
-            <p className="muted-sm"><em className={'tipo-tag ' + m.tipo}>{TIPOS[m.tipo]}</em></p>
+            <div className="segmented tipo-switch">
+              {Object.entries(TIPOS).map(([k, label]) => (
+                <button type="button" key={k} className={m.tipo === k ? 'active' : ''} onClick={() => set({ tipo: k })}>{label}</button>
+              ))}
+            </div>
           </div>
           <button type="button" className="modal-close" onClick={onClose} aria-label="Fechar">×</button>
         </div>
@@ -153,6 +186,9 @@ function MissionForm({ initial, onSave, onRemove, onClose }) {
 
           <fieldset className="f-group">
             <legend>Decolagem</legend>
+            <label className="check-opt base-opt full-row">
+              <input type="checkbox" checked={m.decolaBase} onChange={(e) => toggleBase('decola', e.target.checked)} /> Saída da base (ida)
+            </label>
             <label className="f">
               <span>Aeroporto (sigla)</span>
               <input value={m.decola.sigla} maxLength={4} placeholder="SBSP" className="sigla"
@@ -174,6 +210,9 @@ function MissionForm({ initial, onSave, onRemove, onClose }) {
 
           <fieldset className="f-group">
             <legend>Pouso</legend>
+            <label className="check-opt base-opt full-row">
+              <input type="checkbox" checked={m.pousaBase} onChange={(e) => toggleBase('pousa', e.target.checked)} /> Chegada na base (volta)
+            </label>
             <label className="f">
               <span>Aeroporto (sigla)</span>
               <input value={m.pousa.sigla} maxLength={4} placeholder="SBCT" className="sigla"
@@ -208,6 +247,8 @@ function MissionForm({ initial, onSave, onRemove, onClose }) {
         <div className="form-actions">
           {initial.id && <button type="button" className="btn-danger" onClick={() => onRemove(initial.id)}>Excluir</button>}
           <button type="button" className="btn-ghost" onClick={onClose}>Cancelar</button>
+          <button type="button" className="btn-ghost" disabled={!valid} onClick={() => valid && onNext(m)}
+                  title="Salva esta missão e abre a próxima com a decolagem preenchida">+ Adicionar missão seguinte</button>
           <button type="submit" className="btn-primary" disabled={!valid}>Salvar missão</button>
         </div>
       </form>
