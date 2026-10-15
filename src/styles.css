@@ -269,3 +269,17 @@ h1, h2, h3 { margin: 0; }
   .btn-ghost { margin-left: 0; }
 }
 @media (max-width: 640px) { .modal-grid { grid-template-columns: 1fr; } }
+
+/* Agenda no celular: só dia da semana, data e cidade/UF, um dia por linha */
+@media (max-width: 700px) {
+  .agenda-row { grid-template-columns: 1.15fr .95fr 1.3fr; min-height: 44px; font-size: 13px; }
+  .agenda-row > span { padding: 8px 8px; border-left: 0 !important; }
+  .d-week { font-size: 11px; text-align: left; }
+  .d-date { text-align: left; }
+  .d-city { grid-column: auto; font-weight: 600; }
+  .d-event, .d-obs { display: none; }
+  .empty-day > span:nth-child(n+4) { display: none; }
+  .empty-day > span:nth-child(3) { display: block; }
+  .has-event .d-date { background: none; }
+  .agenda-legend { font-size: 12px; }
+}

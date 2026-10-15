@@ -76,7 +76,7 @@ export default function Agenda() {
               <div key={iso} className={'agenda-row empty-day' + (iso === today ? ' is-today' : '')}>
                 <span className={dayCls}>{weekday(iso)}</span>
                 <span className={'d-date' + (weekend ? ' weekend' : '')}>{fmtDate(iso)}</span>
-                <span /><span /><span />
+                <span className="d-city" /><span className="d-event" /><span className="d-obs" />
               </div>
             )
           }
